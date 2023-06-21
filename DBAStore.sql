@@ -1,4 +1,4 @@
-# CREACION DE LA TABLA CLIENTE #
+-- CREACION DE LA TABLA CLIENTE --
 
 CREATE TABLE IF NOT EXISTS cliente (
     id_cliente INTEGER NOT NULL AUTO_INCREMENT 
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS cliente (
 );
 
 
-# CREACION DE LA TABLA FACTURA #
+-- CREACION DE LA TABLA FACTURA --
 
 CREATE TABLE IF NOT EXISTS factura (
     id_factura INTEGER NOT NULL 
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS factura (
 );
 
 
-# CREACION DE LA TABLA DETERMINADA_FACTURA #
+-- CREACION DE LA TABLA DETERMINADA_FACTURA --
 
 CREATE TABLE IF NOT EXISTS det_factura (
     id_factura INTEGER NOT NULL
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS det_factura (
 );
 
 
-# CREACION DE LA TABLA PRODUCTOS #
+-- CREACION DE LA TABLA PRODUCTOS --
 
 CREATE TABLE IF NOT EXISTS productos (
     cod_producto INTEGER UNSIGNED NOT NULL
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS productos (
 );
 
 
-# INSERCION DE DATOS EN TABLA CLIENTE #
+-- INSERCION DE DATOS EN TABLA CLIENTE --
 
 INSERT INTO cliente (nombre, direccion, ciudad, telefono)
 VALUES('Pascal', 'Calle 9 # 34-21', 'Bogota', '3124546612'),
@@ -81,10 +81,10 @@ VALUES('Pascal', 'Calle 9 # 34-21', 'Bogota', '3124546612'),
     ('Helena Cardona', 'Comuna 13', 'Medellin', '3117651234');
 
 INSERT INTO cliente (nombre, direccion, ciudad, telefono)
-VALUES();
+VALUES ('Juan', 'Naranjo 151', 'CDM', '+55 5547-2920');
 
 
-# INSERCION DE DATOS EN TABLA FACTURA # 
+-- INSERCION DE DATOS EN TABLA FACTURA -- 
 
 INSERT INTO factura (id_factura, id_cliente, valor_total)
 VALUES(2543, 3, 12500),
@@ -94,16 +94,19 @@ VALUES(2545, 1, 1500000);
 
 
 
-# INSERCION DE DATOS EN TABLA PRODUCTOS #
+-- INSERCION DE DATOS EN TABLA PRODUCTOS --
 
 INSERT INTO productos (cod_producto, descripcion, precio_venta)
 VALUES(52342, 'TV 4K 65 pulg', 1500000),
     (81453, 'Mesa de noche', 230000);
 INSERT INTO productos (cod_producto, descripcion, precio_venta)
 VALUES(773819, 'Nintendo Switch', 1500000);
+INSERT INTO productos (cod_producto, descripcion, precio_venta)
+VALUES(775627384, 'Consola play station 5', 2500000);
 
 
-# INSERCION DE DATOS EN TABLA DETERMINADA_FACTURA #
+-- INSERCION DE DATOS EN TABLA DETERMINADA_FACTURA --
+
 INSERT INTO det_factura (id_factura, cod_producto, cant_vendida, valor_unitario)
 VALUES(2544, 81453, 1, 250000),
     (2544, 52342, 1, 500000),
@@ -113,7 +116,8 @@ VALUES(2545, 773819, 1, 1500000);
 
 
 
-# CONSULTAS # 
+-- CONSULTAS --
+
 SELECT nombre, id_factura, valor_total 
     FROM cliente, factura 
     WHERE factura.id_cliente = cliente.id_cliente;
@@ -136,3 +140,45 @@ SELECT nombre AS Cliente, fecha_factura AS Fecha,
         AND factura.id_factura = det_factura.id_factura
         AND det_factura.cod_producto = productos.cod_producto
         AND productos.cod_producto = 773819;
+
+
+-- ACTUALIZACION DE DATOS --
+ 
+UPDATE cliente SET nombre = 'Pedro Pascal'
+    WHERE id_cliente = 1;
+
+UPDATE cliente SET nombre = 'Helena Diaz'
+    WHERE id_cliente = 3;
+
+UPDATE cliente SET nombre = 'Juan Fernandez'
+    WHERE id_cliente = 4;
+
+UPDATE productos SET cod_producto = '773821'
+    WHERE cod_producto = '775627384';
+
+
+UPDATE factura, det_factura 
+    SET det_factura.valor_unitario = det_factura.valor_unitario - 500,
+        factura.valor_total = factura.valor_total - 500
+    WHERE det_factura.id_factura = factura.id_factura
+        AND factura.id_factura = 2545
+        AND det_factura.id_factura = 2545;
+
+
+
+-- BORRADO DE DATOS --
+
+DELETE FROM cliente
+    WHERE id_cliente = 4;
+
+
+-- SELECCION DE DATOS NO EXACTOS --
+
+SELECT * FROM productos 
+    WHERE descripcion LIKE '%Mesa%';
+
+SELECT * FROM productos 
+    WHERE descripcion NOT LIKE '%Mesa%';
+
+SELECT * FROM productos 
+    WHERE descripcion LIKE '%4k%';
