@@ -4,7 +4,7 @@ USE ProcedimientosYFunciones;
 
 -- CREACION TABLA DE CLIENTES --
 
-CREATE TABLE IF NOT EXISTS clientes (
+CREATE TABLE IF NOT EXISTS clientes(
     id_cliente INTEGER NOT NULL AUTO_INCREMENT 
     COMMENT 'Identificador del cliente',
     nombre VARCHAR(30) NOT NULL
@@ -12,8 +12,23 @@ CREATE TABLE IF NOT EXISTS clientes (
     pais CHAR(3) NOT NULL
     COMMENT 'Pais del cliente con identificador de tres letras',
 
-    PRIMARY KEY (id_cliente) 
+    PRIMARY KEY(id_cliente) 
     COMMENT 'El identificador del cliente debe ser unico'
+);
+
+-- CREACION TABLA PRODUCTOS --
+
+CREATE TABLE IF NOT EXISTS productos(
+    cod_producto INT NOT NULL AUTO_INCREMENT
+    COMMENT 'Identificador de producto',
+    descripcion VARCHAR(60) NOT NULL
+    COMMENT 'Describe el producto',
+    costo INT NOT NULL
+    COMMENT 'Valor del producto',
+    precio_venta INT NOT NULL
+    COMMENT 'valor de venta al cliente',
+
+    PRIMARY KEY(cod_producto)
 );
 
 -- INSERCION DE DATOS --
@@ -90,5 +105,50 @@ VALUES('Nicolas Alexander Amaya Rico', 'MEX'),
     ('Mateo Mons', 'COL');
 
 
+INSERT INTO productos(descripcion, costo, precio_venta)
+VALUES('Consola PlayStation 4', 850, 1050),
+    ('Consola XBOX ONE', 840, 1100),
+    ('Nintendo Switch', 950, 1350);
 
 
+
+
+-- PROCEDIMIENTOS --
+-- VnameVar = Variable(V)
+
+DELIMITER //
+
+CREATE PROCEDURE cuenta_clientes
+        (IN Vpais CHAR(3), OUT cuantos_clientes INT)
+    BEGIN
+        SELECT COUNT(*)
+            INTO cuantos_clientes
+            FROM clientes
+            WHERE pais = Vpais;
+    END //
+    
+DELIMITER ;
+
+CALL cuenta_clientes
+    ('COL', @resultado_clientes);
+SELECT @resultado_clientes;
+
+
+-- FUNCIONES --
+
+DELIMITER //
+
+CREATE FUNCTION calcularBeneficio
+            (Vcosto INTEGER, Vventa INTEGER)
+        RETURNS INTEGER
+    NO SQL  -- caracteristica
+    BEGIN   
+        DECLARE Vutilidad INTEGER;
+        SET Vutilidad = Vventa - Vcosto;
+        RETURN Vutilidad;
+    END //
+
+DELIMITER ;
+
+SELECT descripcion, calcularBeneficio(costo, precio_venta) AS UtilidadNeta
+    FROM productos;
